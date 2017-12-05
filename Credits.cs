@@ -15,7 +15,7 @@ namespace StorybrewScripts
 {
     public class Credits : StoryboardObjectGenerator
     {
-        public enum Style{Basic, LettersfromTop, LettersfromBot, LettersfromCenter}
+        public enum Style{Basic, LettersfromTop, LettersfromBot, LettersfromCenter, LettersfromDot, Line}
         
         [Configurable]
         public string Sentence;
@@ -126,6 +126,15 @@ namespace StorybrewScripts
             var lineWidth = 0f;
             var lineHeight = 0f;
                 
+            if(Type == Style.Line)
+            {
+                var line = GetLayer("Sentence").CreateSprite("sb/Particles/pixel.png",OsbOrigin.CentreLeft);
+                line.MoveY(Start, SubtitleY);
+                line.Fade(Start, End, 1, 1);
+                line.MoveX(Start, -107);
+                line.ScaleVec(Start, Start + 500, 0, 1, 850, 1);
+                
+            }
                 foreach (var letter in Sentence)
                 {
                     var texture = font.GetTexture(letter.ToString());
@@ -150,39 +159,59 @@ namespace StorybrewScripts
 
                     if(Type == Style.Basic)
                     {
-                    sprite.Fade(Start - Beat, Start, 0, 1);
-                    sprite.Fade(End, End + Beat, 1, 0);
-                    sprite.MoveY(Start, SubtitleY);
-                    sprite.MoveX(Start, position.X);
+                        sprite.Fade(Start - Beat, Start, 0, 1);
+                        sprite.Fade(End, End + Beat, 1, 0);
+                        sprite.MoveY(Start, SubtitleY);
+                        sprite.MoveX(Start, position.X);
                     }
 
                     else if(Type == Style.LettersfromTop)
                     {
-                    sprite.Fade(Timing, Timing + Beat, 0, 1);
-                    sprite.Fade(End, End + Beat, 1, 0);
-                    sprite.MoveX(Start, position.X);  
-                    sprite.MoveY(OsbEasing.OutCirc, Timing, Timing + Beat, SubtitleY - 10, SubtitleY);  
-                    Timing += Beat/2;
+                        sprite.Fade(Timing, Timing + Beat, 0, 1);
+                        sprite.Fade(End, End + Beat, 1, 0);
+                        sprite.MoveX(Start, position.X);  
+                        sprite.MoveY(OsbEasing.OutCirc, Timing, Timing + Beat, SubtitleY - 10, SubtitleY);  
+                        Timing += Beat/16;
                     }
 
                     else if(Type == Style.LettersfromBot)
                     {
-                    sprite.Fade(Timing, Timing + Beat, 0, 1);
-                    sprite.Fade(End, End + Beat, 1, 0);
-                    sprite.MoveX(Start, position.X);  
-                    sprite.MoveY(OsbEasing.OutCirc, Timing, Timing + Beat, SubtitleY + 10, SubtitleY);  
-                    Timing += Beat/2;
+                        sprite.Fade(Timing, Timing + Beat, 0, 1);
+                        sprite.Fade(End, End + Beat, 1, 0);
+                        sprite.MoveX(Start, position.X);  
+                        sprite.MoveY(OsbEasing.OutCirc, Timing, Timing + Beat, SubtitleY + 10, SubtitleY);  
+                        Timing += Beat/2;
                     }
                     
                     else if(Type == Style.LettersfromCenter)
                     {
-                    sprite.Fade(Timing - Beat, Timing, 0, 1);
-                    sprite.Fade(End, End + Beat, 1, 0);
-                    sprite.MoveX(OsbEasing.OutBack, Timing - Beat, Timing + Beat, letterCenter, position.X);  
-                    sprite.MoveY(Start, SubtitleY);
-                    Timing += Beat/4;
+                        sprite.Fade(Timing - Beat, Timing, 0, 1);
+                        sprite.Fade(End, End + Beat, 1, 0);
+                        sprite.MoveX(OsbEasing.OutBack, Timing - Beat, Timing + Beat, letterCenter, position.X);  
+                        sprite.MoveY(Start, SubtitleY);
+                        Timing += Beat/4;
+                    }
+                    
+                    else if(Type == Style.LettersfromDot)
+                    {
+                        sprite.Fade(Timing, Timing + Beat, 0, 1);
+                        sprite.Fade(End, End + Beat, 1, 0);
+                        sprite.MoveX(Start, position.X);
+                        sprite.MoveY(OsbEasing.OutCirc, Timing, Timing + Beat, SubtitleY + 10, SubtitleY);
+                        sprite.Scale(OsbEasing.OutBack, Timing, Timing + Beat*4, 0, FontScale);
+                        Timing += Beat/4;
+                    }
+                    
+                    else if(Type == Style.Line)
+                    {
+                        sprite.Fade(Timing, Timing + Beat, 0, 1);
+                        sprite.Fade(End, End + Beat, 1, 0);
+                        sprite.MoveX(Start, position.X);
+                        sprite.MoveY(Timing, SubtitleY);
                     }
                     if (additive) sprite.Additive(Start - 200, End);
+
+
                 }
                 letterX += texture.BaseWidth * FontScale;
             }
