@@ -34,6 +34,12 @@ namespace StorybrewScripts
             
 		    while(PosY < 480)
             {
+                if(PosX >= 854)
+                {
+                    PosX = -107 + SquareScale/2;
+                    PosY += SquareScale;
+                }
+                
                 var Sprite = GetLayer("Transitions").CreateSprite(PixelSprite, OsbOrigin.Centre);            
                 Sprite.Move(StartTime, PosX, PosY);     
                 Sprite.Rotate(StartTime, StartTime + EndDuration, 0, Math.PI/2);
@@ -42,12 +48,8 @@ namespace StorybrewScripts
 
                 PosX += SquareScale;
 
-                if(PosX >= 854)
-                {
-                    PosX = -107 + SquareScale/2;
-                    PosY += SquareScale;
-                }
-            }  
+
+            }
         }
     }
 }
