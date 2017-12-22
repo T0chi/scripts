@@ -166,19 +166,11 @@ namespace StorybrewScripts
                 Color = ShadowColor,
             });
 
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 303, 22803);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 23161, 45661);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 46018, 68518);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 68875, 91375);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 91732, 114232);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 114589, 137089);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 137446, 159946);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 160303, 182803);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 206018, 228518);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 228875, 251375);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 251732, 272803);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 274589, 297089);
-            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 297446, 319946);
+            // Verse 1
+            CreateLyrics(font, "hello", FontName, FontSize, new Vector2(320, 400), 0, 10000);
+
+            // Chorus
+            CreateLyrics(font, "hello", FontName, FontSize, new Vector2(320, 400), 10000, 20000);
         }
 
         private void CreateLyrics(Vector2 position, int StartTime, int EndTime, float lineWidth, float lineHeight)
