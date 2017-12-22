@@ -166,11 +166,19 @@ namespace StorybrewScripts
                 Color = ShadowColor,
             });
 
-            // Verse 1
-            CreateLyrics(font, "-lyrics", FontName, FontSize, new Vector2(0, 400), 303, 23161);
-
-            // Chorus
-            CreateLyrics(font, "-lyrics2", FontName, FontSize, new Vector2(0, 400), 23161, 43161);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 303, 22803);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 23161, 45661);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 46018, 68518);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 68875, 91375);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 91732, 114232);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 114589, 137089);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 137446, 159946);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 160303, 182803);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 206018, 228518);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 228875, 251375);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 251732, 272803);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 274589, 297089);
+            CreateLyrics(font, "mjolnir", FontName, FontSize, new Vector2(0, 400), 297446, 319946);
         }
 
         private void CreateLyrics(Vector2 position, int StartTime, int EndTime, float lineWidth, float lineHeight)
@@ -249,7 +257,7 @@ namespace StorybrewScripts
 
             CreateLyrics(position, StartTime, EndTime, lineWidth, lineHeight);
             var letterX = position.X - lineWidth * 0.5f;
-            var timePerLetter = 30;
+            var timePerLetter = 60;
             var i = 0;
             foreach (var letter in Sentence)
             {
@@ -261,7 +269,7 @@ namespace StorybrewScripts
 
                     var sprite = LyricsLayer.CreateSprite(texture.Path, LyricsOrigin, letterPos);
                     sprite.Scale(StartTime, FontScale);
-                    sprite.Fade(StartTime + timePerLetter * i - 200, StartTime + timePerLetter * i, 0, LyricsFade);
+                    sprite.Fade(StartTime + timePerLetter * i, StartTime + 200 + timePerLetter * i, 0, LyricsFade);
                     sprite.Fade(EndTime - 200 + timePerLetter * i, EndTime + timePerLetter * i, LyricsFade, 0);
 
                     if (Additive)
