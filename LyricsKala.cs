@@ -18,7 +18,7 @@ namespace StorybrewScripts
         public string FontName = "Verdana";
 
         [Configurable]
-        public string OutputPath = "sb/lyrics";
+        public string OutputPath = "sb/lyrics/kala";
 
         [Configurable]
         public string CirclePath = "sb/circle.png";
@@ -33,16 +33,19 @@ namespace StorybrewScripts
         public string RightEdgePath = "sb/rightEdge.png";
 
         [Configurable]
-        public float LinesFade = 0.7f;
+        public float LetterSpacing = 4f;
 
         [Configurable]
-        public float LyricsFade = 1;
+        public float LyricsFade = 0.8f;
+
+        [Configurable]
+        public float LinesFade = 0.7f;
 
         [Configurable]
         public float CirclesMinFade = 0.1f;
 
         [Configurable]
-        public float CirclesMaxFade = 0.6f;
+        public float CirclesMaxFade = 0.5f;
 
         [Configurable]
         public bool ShowCircles = true;
@@ -51,13 +54,25 @@ namespace StorybrewScripts
         public bool ShowLines = true;
 
         [Configurable]
-        public float CircleAmount = 20;
+        public float MinCircleAmount = 3;
+
+        [Configurable]
+        public float MaxCircleAmount = 6;
 
         [Configurable]
         public float CircleMinScale = 0.5f;
 
         [Configurable]
         public float CircleMaxScale = 1.5f;
+
+        [Configurable]
+        public bool RandomRotate = true;
+
+        [Configurable]
+        public double CircleMinRotation = 0f;
+
+        [Configurable]
+        public double CircleMaxRotation = 1f;
 
         [Configurable]
         public int FontSize = 26;
@@ -75,22 +90,22 @@ namespace StorybrewScripts
         public int GlowRadius = 0;
 
         [Configurable]
-        public Color4 GlowColor = new Color4(255, 255, 255, 100);
+        public Color4 GlowColor = new Color4(255, 255, 255, 255);
 
         [Configurable]
         public bool AdditiveGlow = true;
 
         [Configurable]
-        public int OutlineThickness = 3;
+        public int OutlineThickness = 0;
 
         [Configurable]
         public Color4 OutlineColor = new Color4(50, 50, 50, 200);
 
         [Configurable]
-        public int ShadowThickness = 0;
+        public int ShadowThickness = 4;
 
         [Configurable]
-        public Color4 ShadowColor = new Color4(0, 0, 0, 100);
+        public Color4 ShadowColor = new Color4(0, 0, 0, 200);
 
         [Configurable]
         public Vector2 Padding = Vector2.Zero;
@@ -108,13 +123,19 @@ namespace StorybrewScripts
         public bool Additive = false;
 
         [Configurable]
-        public Color4 LyricsColor = Color4.White;
-
-        [Configurable]
         public Color4 LinesColor = Color4.Cyan;
 
         [Configurable]
         public Color4 CirclesColor = Color4.White;
+
+        [Configurable]
+        public bool RandomLyricsColor = false;
+
+        [Configurable]
+        public Color4 MinLyricsColor = new Color4(255, 255, 255, 255);
+
+        [Configurable]
+        public Color4 MaxLyricsColor = new Color4(100, 100, 100, 255);
 
         public override void Generate()
         {
@@ -145,27 +166,19 @@ namespace StorybrewScripts
                 Color = ShadowColor,
             });
 
-            CreateLyrics(font, "これはとてもクールです", FontName, FontSize, 320, 400, 0, 6711);
-            CreateLyrics(font, "Testing the second lyrics here", FontName, FontSize, 320, 400, 6711, 13304);
+            // Verse 1
+            CreateLyrics(font, "-lyrics", FontName, FontSize, new Vector2(0, 400), 303, 23161);
+
+            // Chorus
+            CreateLyrics(font, "-lyrics2", FontName, FontSize, new Vector2(0, 400), 23161, 43161);
         }
 
-        private void CreateLyrics(FontGenerator font, string Sentence, string FontName, int FontSize, float SubtitleX, float SubtitleY, int StartTime, int EndTime)
+        private void CreateLyrics(Vector2 position, int StartTime, int EndTime, float lineWidth, float lineHeight)
         {
-            var CirclesLayer = GetLayer("Circles");
-            var LinesLayer = GetLayer("Lines");
-            var LyricsLayer = GetLayer("Lyrics");
-            var texture = font.GetTexture(Sentence.ToString());
-            var position = new Vector2(SubtitleX - texture.BaseWidth * FontScale * 0.5f, SubtitleY)
-                + texture.OffsetFor(LyricsOrigin) * FontScale;
-            var initHeight = (int)texture.BaseHeight * 0.5f;
-
-            //Create the stripes and the circle thing... whatever that is :eyes:
-            var lineWidth = texture.BaseWidth * FontScale;
-            var lineHeight = texture.BaseHeight * FontScale;
-
             if (ShowCircles)
             {
-                for (var i = 0; i < lineWidth / CircleAmount; i++) //Generate circles
+                var CirclesLayer = GetLayer("Circles");
+                for (var i = 0; i < lineWidth * Random(MinCircleAmount, MaxCircleAmount) / 280; i++) //Generate circles
                 {
                     var RandomFade = Random(CirclesMinFade, CirclesMaxFade);
                     var CirclePosition = new Vector2(position.X + (float)Random(-(45 * Math.Ceiling(lineWidth / 45) / 2) - (45 / 2), (45 * Math.Ceiling(lineWidth / 45) / 2) + (45 / 2)), position.Y + (lineHeight / 2) + Random(-(45 / 2), (45 / 2)));
@@ -177,17 +190,23 @@ namespace StorybrewScripts
                     circle.Fade(EndTime, EndTime + 50 * (Math.Ceiling(lineWidth / 45) + 5), RandomFade, 0);
                     circle.Move(StartTime, EndTime + 50 * (Math.Ceiling(lineWidth / 45) + 5), CirclePosition.X, CirclePosition.Y, CirclePosition.X + Random(-16, 16), CirclePosition.Y + Random(-16, 16));
                     circle.Color(StartTime, CirclesColor);
+
+                    if (RandomRotate)
+                    {
+                        var angle = Random(CircleMinRotation, CircleMaxRotation);
+                        circle.Rotate(EndTime, MathHelper.DegreesToRadians(angle));
+                    }
                 }
             }
 
             if (ShowLines)
             {
-                var LeftEdgePosition = new Vector2(position.X - (45 * (float)Math.Ceiling(lineWidth / 45) / 2), SubtitleY + (initHeight / 2) + 7);
-                var RightEdgePosition = new Vector2(position.X - (45 * (float)Math.Ceiling(lineWidth / 45) / 2) + (45 / 2) + 45 * (float)Math.Ceiling(lineWidth / 45) - (45 / 2), SubtitleY + (initHeight / 2) - 7);
+                var LinesLayer = GetLayer("Lines");
+                var LeftEdgePosition = new Vector2(position.X - (45 * (float)Math.Ceiling(lineWidth / 45) / 2), position.Y + (lineHeight / 2.5f) + 7);
+                var RightEdgePosition = new Vector2(position.X - (45 * (float)Math.Ceiling(lineWidth / 45) / 2) + (45 / 2) + 45 * (float)Math.Ceiling(lineWidth / 45) - (45 / 2), position.Y + (lineHeight / 2) - 7);
                 for (int i = 0; i < Math.Ceiling(lineWidth / 45); i++)
                 {
-                    double subtitleX = position.X + Random(-(45 * Math.Ceiling(lineWidth / 45) / 2) - (45 / 2), (45 * Math.Ceiling(lineWidth / 45) / 2) + (45 / 2));
-                    var StripePosition = new Vector2((float)SubtitleX - (45 * (float)Math.Ceiling(lineWidth / 45) / 2) + (45 / 2) + 45 * i, SubtitleY + (initHeight / 2));
+                    var StripePosition = new Vector2((float)position.X - (45 * (float)Math.Ceiling(lineWidth / 45) / 2) + (45 / 2) + 45 * i, position.Y + (lineHeight / 2));
 
                     var stripes = LinesLayer.CreateSprite(StripePath, OsbOrigin.Centre, StripePosition);
                     stripes.ScaleVec(0, StartTime + 50 * (i + 1), StartTime + 50 * (i + 4), 0, 0.5, 0.5, 0.5);
@@ -211,19 +230,61 @@ namespace StorybrewScripts
                 RightEdge.Fade(0, EndTime + 50 * (Math.Ceiling(lineWidth / 45) + 1), EndTime + 50 * (Math.Ceiling(lineWidth / 45) + 4), LinesFade, 0);
                 RightEdge.Color(StartTime, LinesColor);
             }
+        }
 
-            //Create the text
 
-            var sprite = LyricsLayer.CreateSprite(texture.Path, LyricsOrigin, position);
-            sprite.Scale(StartTime, FontScale);
-            sprite.Fade(StartTime - 200, StartTime, 0, LyricsFade);
-            sprite.Fade(EndTime - 200, EndTime, LyricsFade, 0);
-            sprite.Color(StartTime, LyricsColor);
-
-            if (Additive)
+        private void CreateLyrics(FontGenerator font, string Sentence, string FontName, int FontSize, Vector2 position, int StartTime, int EndTime)
+        {
+            var LyricsLayer = GetLayer("Lyrics");
+            var letterY = position.Y;
+            var lineWidth = 0f;
+            var lineHeight = 0f;
+            var letterSpacing = LetterSpacing * FontScale;
+            foreach (var letter in Sentence)
             {
-                sprite.Additive(StartTime, EndTime);
+                var texture = font.GetTexture(letter.ToString());
+                lineWidth += texture.BaseWidth * FontScale + letterSpacing;
+                lineHeight = Math.Max(lineHeight, texture.BaseHeight * FontScale);
             }
+
+            CreateLyrics(position, StartTime, EndTime, lineWidth, lineHeight);
+            var letterX = position.X - lineWidth * 0.5f;
+            var timePerLetter = 30;
+            var i = 0;
+            foreach (var letter in Sentence)
+            {
+                var texture = font.GetTexture(letter.ToString());
+                if (!texture.IsEmpty)
+                {
+                    var letterPos = new Vector2(letterX, letterY)
+                        + texture.OffsetFor(LyricsOrigin) * FontScale;
+
+                    var sprite = LyricsLayer.CreateSprite(texture.Path, LyricsOrigin, letterPos);
+                    sprite.Scale(StartTime, FontScale);
+                    sprite.Fade(StartTime + timePerLetter * i - 200, StartTime + timePerLetter * i, 0, LyricsFade);
+                    sprite.Fade(EndTime - 200 + timePerLetter * i, EndTime + timePerLetter * i, LyricsFade, 0);
+
+                    if (Additive)
+                    {
+                        sprite.Additive(StartTime, EndTime);
+                    }
+
+                    var RealColor1 = RandomLyricsColor ? new Color4((float)Random(MinLyricsColor.R, MaxLyricsColor.R),
+                                                                (float)Random(MinLyricsColor.G, MaxLyricsColor.G),
+                                                                (float)Random(MinLyricsColor.B, MaxLyricsColor.B), 255) : MinLyricsColor;
+                    var RealColor2 = RandomLyricsColor ? new Color4((float)Random(MinLyricsColor.R, MaxLyricsColor.R),
+                                                                (float)Random(MinLyricsColor.G, MaxLyricsColor.G),
+                                                                (float)Random(MinLyricsColor.B, MaxLyricsColor.B), 255) : MaxLyricsColor;
+
+                    sprite.Color(StartTime, EndTime, RealColor1, RealColor2);
+                    i++;
+                }
+                letterX += texture.BaseWidth * FontScale + letterSpacing;
+            }
+            letterY += lineHeight;
+
+            //var position = new Vector2(SubtitleX - texture.BaseWidth * FontScale * 0.5f, SubtitleY)
+            //    + texture.OffsetFor(Origin) * FontScale;
         }
     }
 }
