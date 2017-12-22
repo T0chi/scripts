@@ -32,6 +32,9 @@ namespace StorybrewScripts
         public int EndTime = 10000;
 
         [Configurable]
+        public bool ShowMilliseconds = true;
+
+        [Configurable]
         public float LetterSpacing = 10f;
 
         [Configurable]
@@ -143,32 +146,66 @@ namespace StorybrewScripts
         {
             var layer = GetLayer("");
 
-            var delay = new int[] { 600000, 60000, 0, 10000, 1000, 0, 100, 10, 1 };
-            for (int i = 0; i < delay.Count(); i++)
+            if (!ShowMilliseconds)
             {
+                var delay = new int[] { 600000, 60000, 0, 10000, 1000 };
+                for (int i = 0; i < delay.Count(); i++)
+                {
 
-                OsbSprite sprite;
-                if (delay[i] <= 0)
-                    sprite = layer.CreateSprite(OutputPath + "/t.png", OsbOrigin.TopLeft, position + new Vector2(LetterSpacing * i + ColonOffset.X * FontScale, ColonOffset.Y * FontScale));
-                else
-                    sprite = layer.CreateAnimation(OutputPath + "/t_.png", delay[i] == 10000 ? 6 : 10, delay[i], OsbLoopType.LoopForever, OsbOrigin.TopLeft, position + new Vector2(LetterSpacing * i, 0));
+                    OsbSprite sprite;
+                    if (delay[i] <= 0)
+                        sprite = layer.CreateSprite(OutputPath + "/t.png", OsbOrigin.TopLeft, position + new Vector2(LetterSpacing * i + ColonOffset.X * FontScale, ColonOffset.Y * FontScale));
+                    else
+                        sprite = layer.CreateAnimation(OutputPath + "/t_.png", delay[i] == 10000 ? 6 : 10, delay[i], OsbLoopType.LoopForever, OsbOrigin.TopLeft, position + new Vector2(LetterSpacing * i, 0));
 
-                
-                sprite.Scale(sTime, FontScale);
-                sprite.Fade(sTime + FadeInDelay, sTime + FadeInDelay + 200, 0f, Fade);
-                sprite.Fade(eTime - 200, eTime, Fade, 0);
 
-                if (Additive)
-                    sprite.Additive(sTime, eTime);
+                    sprite.Scale(sTime, FontScale);
+                    sprite.Fade(sTime + FadeInDelay, sTime + FadeInDelay + 200, 0f, Fade);
+                    sprite.Fade(eTime - 200, eTime, Fade, 0);
 
-                var RealColor1 = RandomColor ? new Color4((float)Random(MinColor.R, MaxColor.R),
-                                                            (float)Random(MinColor.G, MaxColor.G),
-                                                            (float)Random(MinColor.B, MaxColor.B), 255) : MinColor;
-                var RealColor2 = RandomColor ? new Color4((float)Random(MinColor.R, MaxColor.R),
-                                                            (float)Random(MinColor.G, MaxColor.G),
-                                                            (float)Random(MinColor.B, MaxColor.B), 255) : MaxColor;
+                    if (Additive)
+                        sprite.Additive(sTime, eTime);
 
-                sprite.Color(sTime, eTime, RealColor1, RealColor2);
+                    var RealColor1 = RandomColor ? new Color4((float)Random(MinColor.R, MaxColor.R),
+                                                                (float)Random(MinColor.G, MaxColor.G),
+                                                                (float)Random(MinColor.B, MaxColor.B), 255) : MinColor;
+                    var RealColor2 = RandomColor ? new Color4((float)Random(MinColor.R, MaxColor.R),
+                                                                (float)Random(MinColor.G, MaxColor.G),
+                                                                (float)Random(MinColor.B, MaxColor.B), 255) : MaxColor;
+
+                    sprite.Color(sTime, eTime, RealColor1, RealColor2);
+                }
+            }
+
+            else
+            {
+                var delay = new int[] { 600000, 60000, 0, 10000, 1000, 0, 100, 10, 1 };
+                for (int i = 0; i < delay.Count(); i++)
+                {
+
+                    OsbSprite sprite;
+                    if (delay[i] <= 0)
+                        sprite = layer.CreateSprite(OutputPath + "/t.png", OsbOrigin.TopLeft, position + new Vector2(LetterSpacing * i + ColonOffset.X * FontScale, ColonOffset.Y * FontScale));
+                    else
+                        sprite = layer.CreateAnimation(OutputPath + "/t_.png", delay[i] == 10000 ? 6 : 10, delay[i], OsbLoopType.LoopForever, OsbOrigin.TopLeft, position + new Vector2(LetterSpacing * i, 0));
+
+
+                    sprite.Scale(sTime, FontScale);
+                    sprite.Fade(sTime + FadeInDelay, sTime + FadeInDelay + 200, 0f, Fade);
+                    sprite.Fade(eTime - 200, eTime, Fade, 0);
+
+                    if (Additive)
+                        sprite.Additive(sTime, eTime);
+
+                    var RealColor1 = RandomColor ? new Color4((float)Random(MinColor.R, MaxColor.R),
+                                                                (float)Random(MinColor.G, MaxColor.G),
+                                                                (float)Random(MinColor.B, MaxColor.B), 255) : MinColor;
+                    var RealColor2 = RandomColor ? new Color4((float)Random(MinColor.R, MaxColor.R),
+                                                                (float)Random(MinColor.G, MaxColor.G),
+                                                                (float)Random(MinColor.B, MaxColor.B), 255) : MaxColor;
+
+                    sprite.Color(sTime, eTime, RealColor1, RealColor2);
+                }
             }
         }
 
